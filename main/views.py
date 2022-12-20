@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect
 from main.utils import *
 
 
@@ -12,6 +12,8 @@ def index_page():
 
 @main_blueprint.route('/search')
 def search_page():
-    substr = request.args.get('substr', '')
+    substr = request.args.get('s', '')
     posts = find_posts(substr)
+    if not posts:
+        return redirect('/')
     return render_template('post_list.html', posts=posts, search_request=substr)

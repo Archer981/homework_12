@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect
 from loader.utils import *
 from main.utils import save_post
 
@@ -13,7 +13,13 @@ def add_post_page():
 @loader_blueprint.route('/upload_post', methods=['POST'])
 def upload_post_page():
     picture = request.files.get('picture')
+    try:
+        is_picture(picture)
+    except Exception as e:
+        # print(e)
+        return redirect('/add_post')
     post = request.form.get('content')
     picture_path = save_picture(picture)
-    save_post(picture_path, post)
+    if not save_post(picture_path, post):
+        return '/'
     return render_template('post_uploaded.html', picture=picture_path, post=post)
